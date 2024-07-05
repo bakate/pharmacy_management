@@ -5,7 +5,8 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=12.x"
+    "npm": ">=9.6.0",
+    "node": ">=18.18.0"
   },
   "scripts": {
     "lint": "eslint .",
