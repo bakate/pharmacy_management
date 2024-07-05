@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"module": "esnext",
+		"module": "NodeNext",
 		"lib": ["dom", "dom.iterable", "esnext"],
-		"moduleResolution": "node",
+		"moduleResolution": "NodeNext",
 		"rootDir": "./src",
 		"outDir": "./dist",
 		"esModuleInterop": true,

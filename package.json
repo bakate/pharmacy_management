@@ -11,6 +11,7 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
 		"test": "jest",
+    "test:w": "jest --watch",
 		"start": "ts-node src/index.ts",
 		"build": "tsc",
 		"dev": "ts-node-dev --respawn src/index.ts"
