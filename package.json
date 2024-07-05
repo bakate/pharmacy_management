@@ -10,13 +10,14 @@
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
-		"test": "jest",
+    "test": "jest",
     "test:w": "jest --watch",
-		"start": "ts-node src/index.ts",
-		"build": "tsc",
-		"dev": "ts-node-dev --respawn src/index.ts"
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn src/index.ts"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.9",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
