@@ -1,92 +1,92 @@
+type DrugUpdateStrategy = {
+  update(drug: Drug): void;
+};
+
 export class Drug {
   constructor(
     public name: string,
     public expiresIn: number,
     public benefit: number,
-  ) {
-    this.name = name;
-    this.expiresIn = expiresIn;
-    this.benefit = benefit;
+  ) {}
+
+  decrementExpiresIn(): void {
+    this.expiresIn--;
+  }
+
+  increaseBenefit(amount: number): void {
+    this.benefit = Math.min(50, this.benefit + amount);
+  }
+
+  decreaseBenefit(amount: number): void {
+    this.benefit = Math.max(0, this.benefit - amount);
+  }
+}
+
+// Regular Drug Strategy
+class RegularDrugStrategy implements DrugUpdateStrategy {
+  update(drug: Drug): void {
+    drug.decrementExpiresIn();
+    drug.decreaseBenefit(drug.expiresIn < 0 ? 2 : 1);
+  }
+}
+
+// Herbal Tea Strategy
+class HerbalTeaStrategy implements DrugUpdateStrategy {
+  update(drug: Drug): void {
+    drug.decrementExpiresIn();
+    drug.increaseBenefit(drug.expiresIn < 0 ? 2 : 1);
+  }
+}
+
+// Fervex Strategy
+class FervexStrategy implements DrugUpdateStrategy {
+  update(drug: Drug): void {
+    drug.decrementExpiresIn();
+    if (drug.expiresIn < 0) {
+      drug.benefit = 0;
+    } else if (drug.expiresIn <= 5) {
+      drug.increaseBenefit(3);
+    } else if (drug.expiresIn <= 10) {
+      drug.increaseBenefit(2);
+    } else {
+      drug.increaseBenefit(1);
+    }
+  }
+}
+
+// Magic Pill Strategy
+class MagicPillStrategy implements DrugUpdateStrategy {
+  update(drug: Drug): void {}
+}
+
+// Dafalgan Strategy
+class DafalganStrategy implements DrugUpdateStrategy {
+  update(drug: Drug): void {
+    drug.decrementExpiresIn();
+    drug.decreaseBenefit(drug.expiresIn < 0 ? 4 : 2);
   }
 }
 
 export class Pharmacy {
-  constructor(public drugs: Drug[] = []) {}
-
-  private updateRegularDrug(drug: Drug) {
-    drug.expiresIn -= 1;
-    if (drug.benefit >= 0) {
-      drug.benefit = Math.max(0, drug.benefit - 1);
-    } else {
-      drug.benefit = Math.min(0, drug.benefit - 2);
-    }
-    // Ensure benefit is never more than 50
-    drug.benefit = Math.min(50, drug.benefit);
-  }
-
-  private updateHerbalTea(drug: Drug): void {
-    drug.expiresIn -= 1;
-    if (drug.expiresIn >= 0) {
-      // Not expired: increase by 1
-      drug.benefit = Math.min(50, drug.benefit + 1);
-    } else {
-      // Expired: increase by 2
-      drug.benefit = Math.min(50, drug.benefit + 2);
-    }
-  }
-
-  private updateFervex(drug: Drug): void {
-    // Decrease expiresIn
-    drug.expiresIn -= 1;
-
-    // Update benefit based on expiresIn
-    if (drug.expiresIn < 0) {
-      // After the expiration date, Benefit drops to 0
-      drug.benefit = 0;
-    } else if (drug.expiresIn <= 5) {
-      // 5 days or less, Benefit increases by 3
-      drug.benefit = Math.min(50, drug.benefit + 3);
-    } else if (drug.expiresIn <= 10) {
-      // 10 days or less, Benefit increases by 2
-      drug.benefit = Math.min(50, drug.benefit + 2);
-    } else {
-      // More than 10 days, Benefit increases by 1
-      drug.benefit = Math.min(50, drug.benefit + 1);
-    }
-  }
-
-  private updateDafalgan(drug: Drug): void {
-    drug.expiresIn -= 1;
-
-    if (drug.expiresIn >= 0) {
-      // Not expired: decrease by 2
-      drug.benefit = Math.max(0, drug.benefit - 2);
-    } else {
-      // Expired: decrease by 4
-      drug.benefit = Math.max(0, drug.benefit - 4);
-    }
+  private strategies: Map<string, DrugUpdateStrategy>;
+  constructor(public drugs: Drug[] = []) {
+    this.strategies = new Map([
+      ["Regular", new RegularDrugStrategy()],
+      ["Herbal Tea", new HerbalTeaStrategy()],
+      ["Fervex", new FervexStrategy()],
+      ["Magic Pill", new MagicPillStrategy()],
+      ["Dafalgan", new DafalganStrategy()],
+    ]);
   }
 
   public updateBenefitValue() {
     this.drugs.forEach((drug) => {
-      switch (drug.name) {
-        case "Herbal Tea":
-          this.updateHerbalTea(drug);
-          break;
-        case "Fervex":
-          this.updateFervex(drug);
-          break;
-        case "Magic Pill":
-          // Magic Pill never changes
-          return drug;
-        case "Dafalgan":
-          this.updateDafalgan(drug);
-          break;
-        default:
-          this.updateRegularDrug(drug);
+      const strategy =
+        this.strategies.get(drug.name) ?? this.strategies.get("Regular");
+      if (strategy) {
+        strategy.update(drug);
       }
     });
-
     return this.drugs;
   }
 }
