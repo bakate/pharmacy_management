@@ -102,4 +102,59 @@ describe("Pharmacy", () => {
       expect(drugs[0].benefit).toBe(20 + 3);
     });
   });
+
+  describe("Dafalgan", () => {
+    const dafalganDrug = "Dafalgan";
+    [
+      {
+        name: dafalganDrug,
+        expiresIn: 20,
+        benefit: 30,
+      },
+      {
+        name: dafalganDrug,
+        expiresIn: 5,
+        benefit: 18,
+      },
+      {
+        name: dafalganDrug,
+        expiresIn: 0,
+        benefit: 0,
+      },
+    ].forEach((drug) => {
+      it(`should decrease the benefit by 2 when expiration date is greater than 0 days [${dafalganDrug.toUpperCase()}]`, () => {
+        const drugs = [new Drug(drug.name, drug.expiresIn, drug.benefit)];
+        const pharmacy = new Pharmacy(drugs);
+        pharmacy.updateBenefitValue();
+        const expectedOutput = drug.benefit - 2 > 0 ? drug.benefit - 2 : 0;
+        expect(drugs[0].benefit).toBe(expectedOutput);
+      });
+    });
+
+    [
+      {
+        name: dafalganDrug,
+        expiresIn: -10,
+        benefit: 30,
+      },
+      {
+        name: dafalganDrug,
+        expiresIn: -40,
+        benefit: 18,
+      },
+      {
+        name: dafalganDrug,
+        expiresIn: -2,
+        benefit: 0,
+      },
+    ].forEach((drug) => {
+      it(`should decrease the benefit by 4 when expiration date is less than 0 days [${dafalganDrug.toUpperCase()}]`, () => {
+        const drugs = [new Drug(drug.name, drug.expiresIn, drug.benefit)];
+        const pharmacy = new Pharmacy(drugs);
+        pharmacy.updateBenefitValue();
+        const expectedOutput = drug.benefit - 4 > 0 ? drug.benefit - 4 : 0;
+        expect(drugs[0].benefit).toBe(expectedOutput);
+      });
+    });
+  });
 });

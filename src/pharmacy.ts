@@ -55,6 +55,18 @@ export class Pharmacy {
     }
   }
 
+  private updateDafalgan(drug: Drug): void {
+    drug.expiresIn -= 1;
+
+    if (drug.expiresIn >= 0) {
+      // Not expired: decrease by 2
+      drug.benefit = Math.max(0, drug.benefit - 2);
+    } else {
+      // Expired: decrease by 4
+      drug.benefit = Math.max(0, drug.benefit - 4);
+    }
+  }
+
   public updateBenefitValue() {
     this.drugs.forEach((drug) => {
       switch (drug.name) {
@@ -67,6 +79,9 @@ export class Pharmacy {
         case "Magic Pill":
           // Magic Pill never changes
           return drug;
+        case "Dafalgan":
+          this.updateDafalgan(drug);
+          break;
         default:
           this.updateRegularDrug(drug);
       }
